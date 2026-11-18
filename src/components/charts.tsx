@@ -20,7 +20,8 @@ function niceTicks(lo: number, hi: number): number[] {
 }
 
 export function LineChart({ metric, pts, target }: { metric: Metric; pts: Point[]; target?: number }) {
-  const [sel, setSel] = useState<number | null>(null);
+  const [selRaw, setSel] = useState<number | null>(null);
+  const sel = selRaw !== null && selRaw < pts.length ? selRaw : null;
   const W = 340, H = 180, left = 34, right = 10, top = 12, bottom = 22;
   const xs = pts.map((p) => dayNum(p.date));
   let x0 = Math.min(...xs), x1 = Math.max(...xs);
@@ -74,9 +75,10 @@ export function LineChart({ metric, pts, target }: { metric: Metric; pts: Point[
 
 /** Variação entre cada medição e a anterior (barra para baixo = diminuiu). */
 export function DeltaBars({ metric, pts }: { metric: Metric; pts: Point[] }) {
-  const [sel, setSel] = useState<number | null>(null);
+  const [selRaw, setSel] = useState<number | null>(null);
   const ds = pts.slice(1).map((p, i) => ({ p, d: p.value - pts[i].value, prev: pts[i] }));
   if (!ds.length) return <p class="muted small">Precisa de pelo menos duas medições.</p>;
+  const sel = selRaw !== null && selRaw < ds.length ? selRaw : null;
   const W = 340, H = 140, top = 10, bottom = 20;
   const m = Math.max(0.5, ...ds.map((x) => Math.abs(x.d)));
   const zero = top + (H - top - bottom) / 2;

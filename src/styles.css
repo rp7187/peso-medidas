@@ -107,6 +107,8 @@ h3 { font-size: 14px; margin: 18px 0 4px; font-weight: 600; color: var(--text-2)
 
 .seg { display: inline-flex; background: var(--surface-2); border-radius: 12px; padding: 3px; gap: 3px; }
 .seg button { border: 0; background: transparent; padding: 8px 10px; border-radius: 9px; color: var(--text-2); font-size: 14px; font-weight: 600; cursor: pointer; }
+.seg.periods { display: grid; grid-template-columns: repeat(6, 1fr); width: 100%; }
+.seg.periods button { padding: 8px 2px; font-size: 13px; white-space: nowrap; }
 .seg button.on { background: var(--primary); color: var(--on-primary); }
 
 .list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
