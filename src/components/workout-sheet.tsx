@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 import type { Store } from "../app";
 import { fmtDate, todayISO } from "../dates";
-import { EXERCISES, int, parseNum, uid, type Workout } from "../model";
+import { EXERCISES, int, km, parseNum, uid, type Workout } from "../model";
 import { exerciseOptions } from "../stats";
 import { Sheet } from "./sheet";
 
@@ -11,6 +11,7 @@ export function WorkoutSheet({ store, workout, onClose }: { store: Store; workou
   const [exercise, setExercise] = useState(workout?.exercise ?? "");
   const [calories, setCalories] = useState(workout ? String(workout.calories) : "");
   const [minutes, setMinutes] = useState(workout?.minutes != null ? String(workout.minutes) : "");
+  const [distance, setDistance] = useState(workout?.distance != null ? km(workout.distance).replace(" km", "") : "");
   const [error, setError] = useState<string | null>(null);
   const options = exerciseOptions(store.workouts, EXERCISES).slice(0, 10);
   const key = exercise.trim().toLocaleLowerCase("pt-BR");
@@ -32,7 +33,13 @@ export function WorkoutSheet({ store, workout, onClose }: { store: Store; workou
       if (n === null || n < 1 || n > 600) return setError("Duração: informe entre 1 e 600 minutos (ou deixe em branco).");
       min = Math.round(n);
     }
-    await store.saveWorkout({ id: workout?.id ?? uid(), date, exercise: name, calories: Math.round(kcal), ...(min ? { minutes: min } : {}) });
+    let dist: number | undefined;
+    if (distance.trim()) {
+      const n = parseNum(distance);
+      if (n === null || n <= 0 || n > 1000) return setError("Distância: informe entre 0,01 e 1000 km (ou deixe em branco).");
+      dist = Math.round(n * 100) / 100;
+    }
+    await store.saveWorkout({ id: workout?.id ?? uid(), date, exercise: name, calories: Math.round(kcal), ...(min ? { minutes: min } : {}), ...(dist ? { distance: dist } : {}) });
     onClose();
   }
 
@@ -68,7 +75,13 @@ export function WorkoutSheet({ store, workout, onClose }: { store: Store; workou
             onInput={(e) => { setMinutes(e.currentTarget.value); setError(null); }} />
         </label>
       </div>
-      <p class="muted small">Calorias: use o valor do relógio, da esteira ou do app de treino.</p>
+      <div class="two">
+        <label>Distância (km)
+          <input type="text" inputMode="decimal" autoComplete="off" value={distance} placeholder={lastSame?.distance ? `último ${km(lastSame.distance).replace(" km", "")}` : "opcional"}
+            onInput={(e) => { setDistance(e.currentTarget.value); setError(null); }} />
+        </label>
+      </div>
+      <p class="muted small">Duração e distância são opcionais. Calorias: use o valor do relógio, da esteira ou do app de treino.</p>
       {error && <p class="error" role="alert">{error}</p>}
     </Sheet>
   );

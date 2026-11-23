@@ -99,6 +99,7 @@ export type WeekStats = {
   days: number; // dias diferentes com exercício
   calories: number;
   minutes: number;
+  distance: number; // km
   count: number;
   activeDates: Set<string>;
 };
@@ -111,6 +112,7 @@ export function weekStats(ws: Workout[], start: string): WeekStats {
     start, activeDates, days: activeDates.size, count: inWeek.length,
     calories: inWeek.reduce((a, w) => a + w.calories, 0),
     minutes: inWeek.reduce((a, w) => a + (w.minutes ?? 0), 0),
+    distance: inWeek.reduce((a, w) => a + (w.distance ?? 0), 0),
   };
 }
 

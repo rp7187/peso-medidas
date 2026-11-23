@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 import type { Store } from "../app";
 import { addDaysISO, fmtDate, fmtShort, fmtWeekday, relDays, todayISO, weekStart } from "../dates";
-import { int, type Workout } from "../model";
+import { int, km, type Workout } from "../model";
 import { lastWeeks, streak, weekStats, type WeekStats } from "../stats";
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
@@ -42,7 +42,7 @@ export function Workouts({ store }: { store: Store }) {
                 {items.map((w) => (
                   <button key={w.id} type="button" class="workout" onClick={() => store.editWorkout(w)}>
                     <span>{w.exercise}</span>
-                    <span class="muted">{w.minutes ? `${w.minutes} min` : ""}</span>
+                    <span class="muted">{[w.distance ? km(w.distance) : "", w.minutes ? `${w.minutes} min` : ""].filter(Boolean).join(" · ")}</span>
                     <b>{int(w.calories)} <span class="muted">kcal</span></b>
                   </button>
                 ))}
@@ -85,7 +85,7 @@ export function ThisWeek({ ws, compact }: { ws: Workout[]; compact?: boolean }) 
         <div class="fact"><span class="muted">{compact ? "Sequência" : "Tempo"}</span>
           {compact
             ? <><b>{plural(st, "dia", "dias")}</b><small class="muted">{st === 1 ? "seguido" : "seguidos"}</small></>
-            : <><b>{cur.minutes ? `${int(cur.minutes)} min` : "—"}</b><small class="muted">{plural(cur.count, "exercício", "exercícios")}</small></>}
+            : <><b>{cur.minutes ? `${int(cur.minutes)} min` : "—"}</b><small class="muted">{cur.distance ? km(Math.round(cur.distance * 10) / 10) : plural(cur.count, "exercício", "exercícios")}</small></>}
         </div>
       </div>
       {!compact && st > 1 && <p class="muted small">Sequência atual: {st} dias seguidos.</p>}
@@ -104,7 +104,7 @@ function WeekBars({ weeks }: { weeks: WeekStats[] }) {
   const avgKcal = avg.length ? avg.reduce((a, w) => a + w.calories, 0) / avg.length : null;
   const s = sel !== null ? weeks[sel] : null;
   const detail = s
-    ? `Semana de ${fmtShort(s.start)}: ${plural(s.days, "dia", "dias")} · ${int(s.calories)} kcal${s.minutes ? ` · ${int(s.minutes)} min` : ""}`
+    ? `Semana de ${fmtShort(s.start)}: ${plural(s.days, "dia", "dias")} · ${int(s.calories)} kcal${s.minutes ? ` · ${int(s.minutes)} min` : ""}${s.distance ? ` · ${km(Math.round(s.distance * 10) / 10)}` : ""}`
     : "Toque numa barra para ver a semana.";
   return (
     <figure class="chart">

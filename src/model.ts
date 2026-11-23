@@ -53,10 +53,14 @@ export type Workout = {
   exercise: string; // "Caminhada", "Musculação"...
   calories: number; // kcal gastas
   minutes?: number; // duração (opcional)
+  distance?: number; // km percorridos (opcional; nem todo exercício tem)
 };
 
 /** Sugestões para o 1º registro; depois aparecem primeiro os exercícios já usados. */
 export const EXERCISES = ["Caminhada", "Corrida", "Bicicleta", "Musculação", "Natação", "Funcional", "Elíptico", "Pilates"];
+
+/** 5.25 → "5,25 km"; 10 → "10 km" */
+export const km = (n: number) => `${n.toLocaleString("pt-BR", { maximumFractionDigits: 2 })} km`;
 
 /** 1250 → "1.250" */
 export const int = (n: number) => Math.round(n).toLocaleString("pt-BR");
@@ -67,5 +71,6 @@ export function isWorkout(x: unknown): x is Workout {
   return typeof e.id === "string" && typeof e.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
     typeof e.exercise === "string" && e.exercise.trim() !== "" &&
     typeof e.calories === "number" && Number.isFinite(e.calories) &&
-    (e.minutes === undefined || (typeof e.minutes === "number" && Number.isFinite(e.minutes)));
+    (e.minutes === undefined || (typeof e.minutes === "number" && Number.isFinite(e.minutes))) &&
+    (e.distance === undefined || (typeof e.distance === "number" && Number.isFinite(e.distance)));
 }

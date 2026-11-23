@@ -26,7 +26,7 @@ Endereço: **https://rp7187.github.io/peso-medidas/**
 
 ## Exercícios
 
-- Cada registro: data, exercício (sugestões + os que você já usou, ou texto livre), calorias (kcal) e duração opcional.
+- Cada registro: data, exercício (sugestões + os que você já usou, ou texto livre), calorias (kcal) e, opcionais, duração (min) e distância (km).
   Pode haver vários no mesmo dia.
 - **Esta semana** (seg a dom): dias com exercício, calorias e tempo, comparados com a semana anterior; sequência de dias seguidos.
 - **Últimas 8 semanas**: calorias por semana e dias ativos.
