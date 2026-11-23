@@ -30,3 +30,8 @@ export function relDays(iso: string): string {
   if (d < 14) return `há ${d} dias`;
   return `há ${Math.round(d / 7)} semanas`;
 }
+
+/** Segunda-feira da semana do dia (semana de segunda a domingo). */
+export const weekStart = (iso: string) => addDaysISO(iso, -((new Date(dayNum(iso)).getUTCDay() + 6) % 7));
+/** "seg", "ter"... */
+export const fmtWeekday = (iso: string) => new Date(dayNum(iso)).toLocaleDateString("pt-BR", { weekday: "short", timeZone: "UTC" }).replace(".", "");

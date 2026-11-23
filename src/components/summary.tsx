@@ -2,6 +2,7 @@ import type { Store } from "../app";
 import { fmtDate, fmtMonth, relDays } from "../dates";
 import { INFO, METRICS, delta, num, withUnit, type Metric } from "../model";
 import { summarize, type GoalProgress } from "../stats";
+import { ThisWeek } from "./workouts";
 
 export function Summary({ store }: { store: Store }) {
   const empty = store.measurements.length === 0;
@@ -13,6 +14,9 @@ export function Summary({ store }: { store: Store }) {
       <button type="button" class="btn primary big wide" onClick={() => store.editMeasurement(null)}>+ Nova medição</button>
       {empty && <p class="muted empty">Registre a primeira medição (peso, cintura ou os dois). O ideal é medir sempre no mesmo dia da semana e no mesmo horário.</p>}
       {METRICS.map((m) => <MetricCard key={m} store={store} metric={m} />)}
+      {store.workouts.length > 0
+        ? <div class="tap" role="button" tabIndex={0} onClick={() => store.goTo("workouts")} onKeyDown={(e) => { if (e.key === "Enter") store.goTo("workouts"); }}><ThisWeek ws={store.workouts} compact /></div>
+        : <button type="button" class="btn ghost wide" onClick={() => store.editWorkout(null)}>+ Registrar exercício</button>}
     </>
   );
 }

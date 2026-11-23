@@ -45,3 +45,27 @@ export function isMeasurement(x: unknown): x is Measurement {
   return typeof e.id === "string" && typeof e.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
     okNum(e.weight) && okNum(e.waist) && (e.weight !== undefined || e.waist !== undefined);
 }
+
+/** Um exercício feito num dia (pode haver vários no mesmo dia). */
+export type Workout = {
+  id: string;
+  date: string; // "AAAA-MM-DD" (dia local)
+  exercise: string; // "Caminhada", "Musculação"...
+  calories: number; // kcal gastas
+  minutes?: number; // duração (opcional)
+};
+
+/** Sugestões para o 1º registro; depois aparecem primeiro os exercícios já usados. */
+export const EXERCISES = ["Caminhada", "Corrida", "Bicicleta", "Musculação", "Natação", "Funcional", "Elíptico", "Pilates"];
+
+/** 1250 → "1.250" */
+export const int = (n: number) => Math.round(n).toLocaleString("pt-BR");
+
+export function isWorkout(x: unknown): x is Workout {
+  if (!x || typeof x !== "object") return false;
+  const e = x as Record<string, unknown>;
+  return typeof e.id === "string" && typeof e.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
+    typeof e.exercise === "string" && e.exercise.trim() !== "" &&
+    typeof e.calories === "number" && Number.isFinite(e.calories) &&
+    (e.minutes === undefined || (typeof e.minutes === "number" && Number.isFinite(e.minutes)));
+}

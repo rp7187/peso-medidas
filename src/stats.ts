@@ -1,5 +1,5 @@
-import { addDaysISO, dayNum, daysBetween, todayISO } from "./dates";
-import type { Goal, Measurement, Metric } from "./model";
+import { addDaysISO, dayNum, daysBetween, todayISO, weekStart } from "./dates";
+import type { Goal, Measurement, Metric, Workout } from "./model";
 
 export type Point = { date: string; value: number; id: string };
 
@@ -90,4 +90,56 @@ export function goalProgress(goal: Goal, current: number, rate: number | null): 
     if (days > 0) neededRate = remaining / (days / 7);
   }
   return { goal, progress, remaining, reached, eta, neededRate };
+}
+
+/* ---------- Exercícios ---------- */
+
+export type WeekStats = {
+  start: string; // segunda-feira
+  days: number; // dias diferentes com exercício
+  calories: number;
+  minutes: number;
+  count: number;
+  activeDates: Set<string>;
+};
+
+export function weekStats(ws: Workout[], start: string): WeekStats {
+  const end = addDaysISO(start, 6);
+  const inWeek = ws.filter((w) => w.date >= start && w.date <= end);
+  const activeDates = new Set(inWeek.map((w) => w.date));
+  return {
+    start, activeDates, days: activeDates.size, count: inWeek.length,
+    calories: inWeek.reduce((a, w) => a + w.calories, 0),
+    minutes: inWeek.reduce((a, w) => a + (w.minutes ?? 0), 0),
+  };
+}
+
+/** As últimas `n` semanas (a atual por último). */
+export function lastWeeks(ws: Workout[], n: number): WeekStats[] {
+  const cur = weekStart(todayISO());
+  return Array.from({ length: n }, (_, i) => weekStats(ws, addDaysISO(cur, -7 * (n - 1 - i))));
+}
+
+/** Dias seguidos com exercício terminando hoje (ou ontem, se hoje ainda não treinou). */
+export function streak(ws: Workout[]): number {
+  const days = new Set(ws.map((w) => w.date));
+  let d = todayISO();
+  if (!days.has(d)) d = addDaysISO(d, -1);
+  let n = 0;
+  while (days.has(d)) { n++; d = addDaysISO(d, -1); }
+  return n;
+}
+
+/** Exercícios já usados (mais recentes primeiro), completados com as sugestões padrão. */
+export function exerciseOptions(ws: Workout[], presets: string[]): string[] {
+  const seen = new Map<string, string>();
+  for (const w of [...ws].sort((a, b) => b.date.localeCompare(a.date))) {
+    const k = w.exercise.trim().toLocaleLowerCase("pt-BR");
+    if (!seen.has(k)) seen.set(k, w.exercise.trim());
+  }
+  for (const p of presets) {
+    const k = p.toLocaleLowerCase("pt-BR");
+    if (!seen.has(k)) seen.set(k, p);
+  }
+  return [...seen.values()];
 }

@@ -1,7 +1,7 @@
 # Medidas · Peso e cintura
 
 Registro semanal de **peso** e **circunferência abdominal**, com evolução (variação entre medições, acumulado,
-ritmo semanal) e **metas** para as duas medidas.
+ritmo semanal) e **metas** para as duas medidas, mais o registro de **exercícios** (tipo, calorias gastas e duração).
 
 Endereço: **https://rp7187.github.io/peso-medidas/**
 
@@ -23,6 +23,14 @@ Endereço: **https://rp7187.github.io/peso-medidas/**
 - **Ritmo**: regressão linear das medições das últimas 8 semanas (unidade por semana).
 - **Meta**: progresso a partir do ponto de partida escolhido (primeira medição ou a atual), quanto falta,
   previsão de quando chega no ritmo atual e, com prazo, o ritmo semanal necessário.
+
+## Exercícios
+
+- Cada registro: data, exercício (sugestões + os que você já usou, ou texto livre), calorias (kcal) e duração opcional.
+  Pode haver vários no mesmo dia.
+- **Esta semana** (seg a dom): dias com exercício, calorias e tempo, comparados com a semana anterior; sequência de dias seguidos.
+- **Últimas 8 semanas**: calorias por semana e dias ativos.
+- Entram no backup (versão 2). Backups antigos continuam sendo importados.
 
 ## Desenvolvimento
 
